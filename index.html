@@ -195,6 +195,28 @@
             padding: 8px 0;
             border-bottom: 1px solid #ddd;
         }
+        #new-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+#new-popup .popup-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+}
+
     </style>
 </head>
 <body>
@@ -278,6 +300,13 @@
             <ul id="appointments-ul"></ul>
         </div>
     </div>
+    <div id="new-popup" class="popup">
+        <div class="popup-content">
+            <h3>Bạn hãy thử nhấn OK xem</h3>
+            <button id="new-popup-ok-btn">Để tôi thử lại</button>
+        </div>
+    </div>
+    
 
     <script>
         const button = document.getElementById('toggle-button');
@@ -315,10 +344,15 @@
             popup.style.display = 'none';
             formPopup.style.display = 'flex';
         });
-
         closePopupButton.addEventListener('click', () => {
-            popup.style.display = 'none';
-        });
+    const newPopup = document.getElementById('new-popup');
+    newPopup.style.display = 'flex';
+
+    // Đóng pop-up khi nhấn OK
+    document.getElementById('new-popup-ok-btn').addEventListener('click', () => {
+        newPopup.style.display = 'none';
+    });
+});
 
         formCloseButton.addEventListener('click', () => {
             formPopup.style.display = 'none';
