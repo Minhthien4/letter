@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" rel="stylesheet">
+    <title>Bức Thư Bí Mật</title>
+    <style>
+        /* Thân trang */
+        body {
+            font-family: 'EB Garamond', serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #f9f7f3, #eae3dc);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: space-between;
+        }
+
+        /* Container chính */
+        .container {
+            margin-top: 50px;
+            flex: 1;
+        }
+
+        /* Hộp thư */
+        .letter {
+            display: none;
+            margin: 20px auto;
+            padding: 30px;
+            max-width: 700px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            line-height: 1.8;
+            text-align: left;
+            color: #333;
+            font-size: 18px;
+            font-style: italic;
+            background-image: url('https://www.transparenttextures.com/patterns/white-paper.png');
+        }
+
+        /* Tiêu đề thư */
+        .letter h2 {
+            font-family: 'EB Garamond', serif;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        /* Đoạn văn */
+        .letter p {
+            margin-bottom: 16px;
+        }
+
+        /* Viền trang trí */
+        .letter:before, .letter:after {
+            content: "";
+            display: block;
+            height: 4px;
+            width: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(to right, #6c757d, transparent);
+        }
+
+        /* Nút mở thư */
+        button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #495057;
+        }
+
+        /* Cửa sổ pop-up */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+
+        .popup input {
+            padding: 8px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .popup button {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .popup button:hover {
+            background-color: #a33c3c;
+        }
+
+        .popup .close-btn {
+            background-color: #333;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .popup .close-btn:hover {
+            background-color: #555;
+        }
+
+        /* Câu chúc */
+        #message-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .message-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+
+        .message-content p {
+            font-size: 18px;
+            color: green;
+        }
+
+        .message-content button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .message-content button:hover {
+            background-color: #495057;
+        }
+
+        /* Hiển thị các cuộc hẹn */
+        #appointments-list {
+            display: none;
+            margin-top: 50px;
+        }
+
+        #appointments-ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #appointments-ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bức Thư Bí Mật</h1>
+        <p>Bấm vào nút bên dưới để mở bức thư nhé!</p>
+        <button id="toggle-button">Mở Thư</button>
+        
+        <div id="letter" class="letter">
+            <h2>Xin chào Nguyệt,</h2>
+            <p>
+                Chắc mi cũng đọc được thư của ta rồi! Từ khi ta thay đổi đến giờ, ta thực sự thích viết luôn ý. Ta viết trên Word nè, giấy nè, bây giờ là code nữa.
+                Ta chỉ muốn viết dòng ni để nói chuyện với mi một xíu. Trời lạnh rồi phải hem? Ta đi ra đường cũng thấy siêu lạnh luôn, mà ta lại mua cho mi 
+                một cái áo tay ngắn. T tính mua cho m cái khăn quàng ấy mà ta đã hứa với mi là sẽ tự đan cho mi một cái nên ta không mua. 
+                Ta thấy cái áo ni đẹp nè, hợp với mi nữa.
+            </p>
+            <p>
+                Hôm bữa ta viết cái thư, ta ngồi nắn nót từng chữ, mà đọc lại cũng thấy chữ xấu kinh khủng. Nhưng đó là lòng thành của ta nên ta hy vọng 
+                mi sẽ đọc nó. Sáng thứ 4 ta đi mua bì thư cho mi, mà ta lại chọn cái bì thư “Nghiêm túc thật sự :))”.
+            </p>
+            <p>
+                Có một điều ta nhận ra á, là mình đã quá dựa dẫm vào đồng tiền. Đáng ra cái tuổi sinh viên ni là mình phải tự lập, tự học, tự làm, tự kiếm tiền, 
+                và có một tình yêu tuổi sinh viên. Bây giờ ta đã biết suy nghĩ nhiều hơn về tương lai của ta. Ta không còn hy vọng sẽ có ai giúp ta nữa, mà ta nghĩ 
+                mọi người sẽ hướng ta đi chớ không phải cầm tay ta mà dẫn đi. Mọi thứ là do thực lực của ta.
+            </p>
+            <p>
+                Cái code này ta code vào ngày 24, là sau ngày ta viết thư á. Hôm qua ta viết thư siêu vui luôn, hiếm lắm ta mới đụng vào cây bút vì ngành của ta ít dùng vở.
+                Chữ ta xấu nữa nên ta khá tự ti. Nhưng ta suy nghĩ thoáng hơn rồi, ta vẫn sẽ cố gắng làm những việc mà mình tự ti nhất!
+            </p>
+            <p>
+                À, còn cái việc mi đọc thư xong thấy cuộc hẹn của ta với mi vào thứ 2 á, nếu mi đi thì mi nhắn tin ta hì. Không đi thì không cần nhắn ta chi cũng được nè!
+                Không sao nhé! Vì ta biết mi cũng đang trong mùa thi cử. Ta chỉ muốn chúc mi thật nhiều sức khỏe nhé!
+            </p>
+            <p>Chúc bạn luôn hạnh phúc và tràn đầy năng lượng!</p>
+            <p>Thân mến,</p>
+            <p><strong>Nguyệt</strong></p>
+            <button class="close-button">Đóng Thư</button>
+        </div>
+
+        <!-- Pop-up -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <h3>Vậy bạn có muốn đi ăn trưa vào trưa thứ 2 không?</h3>
+                <p>Hãy thì thầm cho chúng tôi biết nhé!</p>
+                <button id="popup-ok-btn">OK</button>
+                <button class="close-btn" id="popup-close-btn">Hmmm, tôi sẽ nhắn tin cho bạn vào trước trưa mai nhé!</button>
+            </div>
+        </div>
+
+        <!-- Form Popup -->
+        <div id="form-popup" class="popup">
+            <div class="popup-content">
+                <h3>Thông tin cuộc hẹn</h3>
+                <form id="appointment-form">
+                    <label for="time">Hẹn mấy giờ:</label>
+                    <input type="text" id="time" name="time" required>
+
+                    <label for="food">Ăn món gì:</label>
+                    <input type="text" id="food" name="food" required>
+
+                    <label for="location">Gặp tại đâu:</label>
+                    <input type="text" id="location" name="location" required>
+
+                    <button type="submit">Gửi</button>
+                </form>
+                <button class="close-btn" id="form-close-btn">Đóng</button>
+            </div>
+        </div>
+
+        <!-- Câu chúc Pop-up -->
+        <div id="message-popup" class="popup">
+            <div class="message-content">
+                <p>Cảm ơn bạn đã gửi thông tin! Chúc bạn có một cuộc hẹn thật vui vẻ!</p>
+                <button id="message-close-btn">Đóng</button>
+            </div>
+        </div>
+
+        <!-- Danh sách các cuộc hẹn -->
+        <div id="appointments-list">
+            <h2>Danh sách các cuộc hẹn đã lưu</h2>
+            <ul id="appointments-ul"></ul>
+        </div>
+    </div>
+
+    <script>
+        const button = document.getElementById('toggle-button');
+        const letter = document.getElementById('letter');
+        const closeButtons = document.querySelectorAll('.close-button');
+        const popup = document.getElementById('popup');
+        const okButton = document.getElementById('popup-ok-btn');
+        const closePopupButton = document.getElementById('popup-close-btn');
+        const formPopup = document.getElementById('form-popup');
+        const formCloseButton = document.getElementById('form-close-btn');
+        const form = document.getElementById('appointment-form');
+        const messagePopup = document.getElementById('message-popup');
+        const messageCloseButton = document.getElementById('message-close-btn');
+        const appointmentsList = document.getElementById('appointments-list');
+        const appointmentsUl = document.getElementById('appointments-ul');
+
+        // Mở và đóng thư
+        button.addEventListener('click', () => {
+            if (letter.style.display === 'none' || letter.style.display === '') {
+                letter.style.display = 'block';
+                button.textContent = 'Đừng bấm vào, chỗ này bị lỗi=))';
+            } else {
+                letter.style.display = 'none';
+                button.textContent = 'Mở Thư';
+            }
+        });
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                popup.style.display = 'flex';
+            });
+        });
+
+        okButton.addEventListener('click', () => {
+            popup.style.display = 'none';
+            formPopup.style.display = 'flex';
+        });
+
+        closePopupButton.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        formCloseButton.addEventListener('click', () => {
+            formPopup.style.display = 'none';
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // Ngừng gửi form
+
+            // Lấy thông tin từ form
+            const time = document.getElementById('time').value;
+            const food = document.getElementById('food').value;
+            const location = document.getElementById('location').value;
+
+            // Tạo đối tượng dữ liệu cuộc hẹn
+            const appointment = { time, food, location };
+
+            // Lấy danh sách các cuộc hẹn đã lưu từ localStorage hoặc khởi tạo mảng rỗng
+            let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+
+            // Thêm cuộc hẹn mới vào mảng
+            appointments.push(appointment);
+
+            // Lưu lại mảng cuộc hẹn vào localStorage
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+
+            // Đóng popup form
+            formPopup.style.display = 'none';
+
+            // Hiển thị câu chúc
+            messagePopup.style.display = 'flex';
+        });
+
+        messageCloseButton.addEventListener('click', () => {
+            messagePopup.style.display = 'none'; // Đóng câu chúc pop-up
+            displayAppointments(); // Hiển thị lại cuộc hẹn đã lưu
+        });
+
+        // // Hiển thị thông tin cuộc hẹn đã lưu
+        // function displayAppointments() {
+        //     const appointmentsList = JSON.parse(localStorage.getItem('appointments')) || [];
+
+        //     // Nếu có cuộc hẹn, hiển thị phần danh sách
+        //     if (appointmentsList.length > 0) {
+        //         const appointmentsDiv = document.getElementById('appointments-list');
+        //         const appointmentsUl = document.getElementById('appointments-ul');
+                
+        //         // Làm sạch danh sách trước khi thêm mới
+        //         appointmentsUl.innerHTML = '';
+
+        //         // Thêm mỗi cuộc hẹn vào danh sách
+        //         appointmentsList.forEach((appointment) => {
+        //             const listItem = document.createElement('li');
+        //             listItem.textContent = `Thời gian: ${appointment.time}, Món ăn: ${appointment.food}, Địa điểm: ${appointment.location}`;
+        //             appointmentsUl.appendChild(listItem);
+        //         });
+
+        //         // Hiển thị phần danh sách cuộc hẹn
+        //         appointmentsDiv.style.display = 'block';
+        //     }
+        // }
+
+        // Gọi hàm để hiển thị cuộc hẹn khi trang được tải
+        window.onload = displayAppointments;
+    </script>
+</body>
+</html>
